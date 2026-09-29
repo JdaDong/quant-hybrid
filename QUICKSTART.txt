@@ -32,6 +32,18 @@
    make test
    make smoke
 
+文档
+----
+- README.md：项目总览和完整启动说明
+- docs/README.md：文档索引
+- docs/architecture.md：架构和边界
+- docs/api.md：HTTP、NDJSON、Protobuf 契约
+- docs/research.md：因子和回测口径
+- docs/development.md：开发、测试和调试
+- docs/roadmap.md：生产化演进路线
+- docs/risk-boundaries.md：风险边界和上线检查
+- docs/architecture.html：可视化架构页
+
 当前边界
 --------
 - 只使用本地 CSV 和模拟执行核心，不接真实券商或交易所。

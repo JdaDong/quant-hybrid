@@ -1,0 +1,14 @@
+# Build outputs
+/bin/
+/build/
+
+# Generated research output
+/data/signals.csv
+
+# Local runtime logs
+*.log
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
