@@ -1,0 +1,39 @@
+混合语言量化交易系统 MVP
+========================
+
+目录
+----
+- go/control-plane/main.go：Go 控制面，HTTP 订单入口、风险门禁、OMS 快照
+- cpp/execution_core/main.cpp：C++ 执行核心，NDJSON 订单输入、模拟成交、持仓和现金
+- scala/factor/src/main/scala/FactorJob.scala：Scala 因子批任务，计算 SMA5/SMA10 信号
+- java/backtest/src/Backtest.java：Java 回测，使用下一交易日收益，避免前视偏差
+- proto/events.proto：长期演进的 Protobuf 契约草案
+- config/system.json：风险和组件边界配置
+- docs/architecture.html：架构可视化
+
+运行
+----
+1. 编译所有模块：
+   make build
+
+2. 运行研究链路：
+   make research
+   该命令生成 data/signals.csv，并输出 Java 回测结果。
+
+3. 启动实时模拟链路：
+   make run
+   另开终端提交订单：
+   curl -X POST http://127.0.0.1:8080/orders \
+     -H 'Content-Type: application/json' \
+     -d '{"symbol":"DEMO","side":"BUY","quantity":10,"limit_price":100}'
+   curl http://127.0.0.1:8080/snapshot
+
+4. 一键验证：
+   make test
+   make smoke
+
+当前边界
+--------
+- 只使用本地 CSV 和模拟执行核心，不接真实券商或交易所。
+- Go 到 C++ 当前使用本地 stdin/stdout NDJSON，便于调试；生产环境应替换为 Protobuf/FlatBuffers、共享内存或专用消息总线。
+- 进入实盘前必须补齐订单幂等、持久化、断线重连、时钟同步、限频、审计、滑点/手续费模型、压力测试和灾备。

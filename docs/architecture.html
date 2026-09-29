@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>混合语言量化交易系统</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1f2937;background:#f8fafc;line-height:1.6}body{max-width:1100px;margin:0 auto;padding:40px 24px}h1{font-size:30px;margin:0 0 8px}h2{font-size:20px;margin-top:30px}.lead{color:#475569}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:#fff;border:1px solid #dbe3ec;border-radius:12px;padding:18px}.go{border-top:4px solid #0f766e}.cpp{border-top:4px solid #b45309}.java{border-top:4px solid #4f46e5}.scala{border-top:4px solid #a16207}.flow{background:#fff;border:1px solid #dbe3ec;border-radius:12px;padding:20px;overflow:auto}.step{display:inline-block;vertical-align:top;width:180px;min-height:76px;margin:5px;padding:14px;border-radius:10px;background:#eff6ff;border:1px solid #93c5fd}.arrow{display:inline-block;font-size:24px;color:#64748b;vertical-align:middle}.warn{padding:14px;border-left:4px solid #dc2626;background:#fef2f2}
+</style>
+</head>
+<body>
+<h1>混合语言量化交易系统 MVP</h1>
+<p class="lead">实时路径保持短而硬：Go 控制面 → C++ 执行核心。研究路径异步解耦：Scala 因子批处理 → Java 回测。四种语言各司其职，不把 Spark/Scala 塞进交易热路径。</p>
+<h2>职责边界</h2>
+<div class="grid">
+<div class="card go"><h3>Go：控制面</h3><p>HTTP API、订单校验、风险门禁、OMS 状态、进程管理、事件转发。</p></div>
+<div class="card cpp"><h3>C++：执行核心</h3><p>NDJSON 订单协议、内存持仓、模拟撮合、低延迟风险前置。未来替换为柜台/交易所适配器。</p></div>
+<div class="card scala"><h3>Scala：因子批处理</h3><p>读取历史行情，计算 SMA 因子和信号文件。未来可平滑迁移到 Spark + Parquet。</p></div>
+<div class="card java"><h3>Java：回测与实验</h3><p>严格使用下一交易日收益，输出收益、最大回撤和交易次数，作为策略验收基线。</p></div>
+</div>
+<h2>数据流</h2>
+<div class="flow"><span class="step"><b>prices.csv</b><br>历史行情</span><span class="arrow">→</span><span class="step"><b>Scala FactorJob</b><br>SMA5/SMA10 信号</span><span class="arrow">→</span><span class="step"><b>Java Backtest</b><br>避免前视偏差</span><br><span class="step"><b>HTTP /orders</b><br>策略或人工下单</span><span class="arrow">→</span><span class="step"><b>Go control-plane</b><br>风险门禁 + OMS</span><span class="arrow">→</span><span class="step"><b>C++ execution_core</b><br>撮合 / fill</span></div>
+<h2>协议与演进</h2>
+<p>当前本地 MVP 采用便于调试的 NDJSON；<code>proto/events.proto</code> 定义长期演进的 Protobuf 契约。生产化时建议：实时事件使用 FlatBuffers/Protobuf，研究数据使用 Parquet，审计账使用 PostgreSQL/ClickHouse。</p>
+<div class="warn"><b>明确不做的事：</b>不接真实券商、不保存真实密钥、不默认产生真实订单。上线前必须补充交易所适配、幂等、断线重连、持久化、时钟同步、限频、审计、压测和灾备。</div>
+</body>
+</html>

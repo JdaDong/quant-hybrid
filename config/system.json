@@ -1,0 +1,16 @@
+{
+  "name": "quant-hybrid-mvp",
+  "market": "generic-csv-simulator",
+  "starting_cash": 1000000.0,
+  "risk": {
+    "max_order_quantity": 100,
+    "max_abs_position": 1000,
+    "max_notional": 100000.0
+  },
+  "runtime": {
+    "control_plane": "go",
+    "execution_core": "cpp",
+    "backtest": "java",
+    "factor_batch": "scala"
+  }
+}

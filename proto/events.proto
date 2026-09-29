@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package quant.v1;
+
+message Order {
+  string order_id = 1;
+  string symbol = 2;
+  enum Side { SIDE_UNSPECIFIED = 0; BUY = 1; SELL = 2; }
+  Side side = 3;
+  int64 quantity = 4;
+  double limit_price = 5;
+  int64 exchange_timestamp_ns = 6;
+}
+
+message ExecutionEvent {
+  string order_id = 1;
+  string symbol = 2;
+  string event_type = 3;
+  int64 filled_quantity = 4;
+  double fill_price = 5;
+  int64 exchange_timestamp_ns = 6;
+}
